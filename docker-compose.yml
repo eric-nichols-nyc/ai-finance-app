@@ -11,7 +11,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/finance
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/neondb
     depends_on:
       db:
         condition: service_healthy
