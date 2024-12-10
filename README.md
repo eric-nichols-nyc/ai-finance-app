@@ -139,6 +139,225 @@ docker-compose exec app npx prisma generate
 └── ...
 ```
 
+```mermaid
+# Credit Card Management System Database Schema
+
+This project implements a comprehensive database schema for managing credit cards, transactions, and related financial data. The system supports AI-powered transaction categorization, notification preferences, and detailed tracking of credit card activities.
+
+## 📊 Database Schema Diagram
+
+```mermaid
+erDiagram
+    User ||--o{ CreditCard : has
+    User ||--o{ Category : creates
+    User ||--o{ Tag : creates
+    User ||--|| NotificationPreference : has
+
+    CreditCard ||--o{ Transaction : contains
+    CreditCard ||--o{ RecurringCharge : has
+    CreditCard ||--o{ InterestCharge : tracks
+    CreditCard ||--o{ Note : has
+
+    Transaction }o--o| Category : categorized_in
+    Transaction }o--o{ Tag : tagged_with
+    
+    User {
+        string id PK
+        string email UK
+        string name
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    CreditCard {
+        string id PK
+        string userId FK
+        string name
+        string lastFourDigits
+        float currentBalance
+        float creditLimit
+        float apr
+        int dueDate
+        boolean isActive
+        float rewardRate
+        int statementDate
+        float minimumPayment
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Transaction {
+        string id PK
+        string creditCardId FK
+        float amount
+        string description
+        datetime date
+        string categoryId FK
+        boolean isRecurring
+        string originalText
+        boolean aiProcessed
+        float aiConfidence
+        json aiSuggestions
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Category {
+        string id PK
+        string userId FK
+        string name
+        string color
+        string icon
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Tag {
+        string id PK
+        string userId FK
+        string name
+    }
+
+    InterestCharge {
+        string id PK
+        string creditCardId FK
+        float amount
+        datetime date
+        datetime createdAt
+    }
+
+    RecurringCharge {
+        string id PK
+        string creditCardId FK
+        float amount
+        string description
+        int dayOfMonth
+        boolean isActive
+        datetime lastCharged
+        datetime nextDueDate
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    Note {
+        string id PK
+        string creditCardId FK
+        string content
+        boolean isPinned
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    NotificationPreference {
+        string id PK
+        string userId FK
+        boolean paymentReminders
+        int daysBeforeDue
+        boolean statementReminders
+        boolean highBalanceAlert
+        float highBalanceThreshold
+        boolean unusualActivity
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    ProcessedDocument {
+        string id PK
+        string fileName
+        string originalName
+        string status
+        string errorMessage
+        int pageCount
+        string mimeType
+        datetime processedAt
+        datetime createdAt
+        datetime updatedAt
+    }
+```
+
+## 🗄️ Core Models
+
+### User
+- Central user model with authentication and profile information
+- One-to-many relationship with credit cards, categories, and tags
+- One-to-one relationship with notification preferences
+
+### CreditCard
+- Stores credit card details including balance, limit, and APR
+- Tracks statement dates and minimum payments
+- Contains reward rate information
+- Links to transactions, recurring charges, and interest charges
+
+### Transaction
+- Records individual credit card transactions
+- Supports AI-powered categorization with confidence scoring
+- Can be tagged for flexible organization
+- Maintains original transaction text for reference
+
+### Category & Tag
+- Flexible categorization system
+- Categories include visual elements (color and icon)
+- Tags allow for additional transaction organization
+- Many-to-many relationship between transactions and tags
+
+## 🔔 Notification System
+
+The `NotificationPreference` model supports:
+- Payment due date reminders
+- Statement closing date alerts
+- High balance warnings
+- Unusual activity detection
+
+## 📝 Notes & Documentation
+
+- `Note` model for card-specific annotations
+- `ProcessedDocument` tracks uploaded statements
+- Support for AI processing status and error handling
+
+## 🤖 AI Integration
+
+The schema supports AI-powered features:
+- Transaction categorization
+- Confidence scoring
+- Multiple category suggestions
+- Original text preservation
+- Processing status tracking
+
+## 🛠️ Technical Implementation
+
+This schema is implemented using:
+- Prisma as the ORM
+- PostgreSQL as the database
+- TypeScript for type safety
+- NextJS for the application framework
+
+## Getting Started
+
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Set up your database URL in `.env`:
+```
+DATABASE_URL="postgresql://user:password@localhost:5432/dbname"
+```
+
+3. Run migrations:
+```bash
+npx prisma migrate dev
+```
+
+4. Generate Prisma Client:
+```bash
+npx prisma generate
+```
+
+## License
+
+[Your License Here]
+```
+
 ## Environment Variables
 
 ### Development (Docker)
